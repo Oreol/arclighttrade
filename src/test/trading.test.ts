@@ -19,3 +19,12 @@ describe('Evaluation rules',()=>{
  it('uses high momentum above 60 percent',()=>expect(momentum(61)).toContain('Strong momentum'));
  it('does not mark exactly 60 percent as high',()=>expect(momentum(60)).not.toContain('Strong momentum'));
 });
+import {margin,pips} from '@/features/trading';
+const fx=(asset:Position['asset'],entry:number):Position=>({id:'f',asset,side:'LONG',entry,units:0,allocation:0,tp:null,sl:null,opened:'',lots:1});
+describe('Forex lot rules',()=>{
+ it('pays $10 per pip per standard lot on EUR/USD',()=>expect(pnl(fx('EUR/USD',1.1),1.1001)).toBeCloseTo(10));
+ it('pays $100 per $1 per lot on gold',()=>expect(pnl(fx('XAU/USD',2600),2601)).toBeCloseTo(100));
+ it('counts USD/JPY pips at 0.01',()=>expect(pips(fx('USD/JPY',150),150.1)).toBeCloseTo(10));
+ it('requires $1000 margin for 1 lot USD/JPY at 1:100',()=>expect(margin('USD/JPY',1,150)).toBe(1000));
+ it('requires $1100 margin for 1 lot EUR/USD at 1.1',()=>expect(margin('EUR/USD',1,1.1)).toBeCloseTo(1100));
+});
