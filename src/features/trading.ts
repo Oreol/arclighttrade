@@ -25,6 +25,6 @@ export const momentum=(percent:number)=>percent<30?'Pace is slow — take a less
 /** Fetch live quotes over REST: Binance for crypto, Frankfurter for FX, gold-api for XAU. */
 export async function fetchQuotes():Promise<Partial<Record<Asset,number>>>{const out:Partial<Record<Asset,number>>={};await Promise.allSettled([
  fetch('https://api.binance.com/api/v3/ticker/price?symbols='+encodeURIComponent('["BTCUSDT","ETHUSDT","SOLUSDT"]')).then(r=>r.json()).then((rows:{symbol:string;price:string}[])=>{for(const r of rows){const a=({BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL'} as Record<string,Asset>)[r.symbol];if(a)out[a]=Number(r.price);}}),
- fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY').then(r=>r.json()).then((d:{rates:{EUR:number;GBP:number;JPY:number}})=>{out['EUR/USD']=1/d.rates.EUR;out['GBP/USD']=1/d.rates.GBP;out['USD/JPY']=d.rates.JPY;}),
+ fetch('https://api.frankfurter.dev/v1/latest?from=USD&to=EUR,GBP,JPY').then(r=>r.json()).then((d:{rates:{EUR:number;GBP:number;JPY:number}})=>{out['EUR/USD']=1/d.rates.EUR;out['GBP/USD']=1/d.rates.GBP;out['USD/JPY']=d.rates.JPY;}),
  fetch('https://api.gold-api.com/price/XAU').then(r=>r.json()).then((d:{price:number})=>{if(d.price)out['XAU/USD']=Number(d.price);}),
 ]);return out;}
