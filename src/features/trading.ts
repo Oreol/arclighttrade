@@ -1,0 +1,12 @@
+export type Asset = 'XAU/USD'|'EUR/USD'|'GBP/USD'|'USD/JPY'|'BTC'|'ETH'|'SOL';
+export const instruments: Record<Asset,{price:number;symbol:string;name:string;precision:number}> = {
+ 'XAU/USD':{price:2643.58,symbol:'OANDA:XAUUSD',name:'Gold',precision:2},'EUR/USD':{price:1.08472,symbol:'FX:EURUSD',name:'Euro / US Dollar',precision:5},'GBP/USD':{price:1.29916,symbol:'FX:GBPUSD',name:'British Pound / US Dollar',precision:5},'USD/JPY':{price:149.32,symbol:'FX:USDJPY',name:'US Dollar / Japanese Yen',precision:3},BTC:{price:67432.8,symbol:'COINBASE:BTCUSD',name:'Bitcoin',precision:2},ETH:{price:2634.21,symbol:'COINBASE:ETHUSD',name:'Ethereum',precision:2},SOL:{price:156.48,symbol:'COINBASE:SOLUSD',name:'Solana',precision:2}
+};
+export type Position={id:string;asset:Asset;side:'LONG'|'SHORT';entry:number;units:number;allocation:number;tp:number|null;sl:number|null;opened:string};
+export type TradeLog=Position&{exit:number;pnl:number;reason:string;closed:string};
+export const money=(v:number)=>v.toLocaleString('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2});
+export const price=(asset:string,v:number)=>v.toLocaleString('en-US',{minimumFractionDigits:instruments[asset as Asset]?.precision??2,maximumFractionDigits:instruments[asset as Asset]?.precision??2});
+export const pnl=(p:Position,mark:number)=>(mark-p.entry)*p.units*(p.side==='LONG'?1:-1);
+export function trigger(p:Position,mark:number){if(p.sl!==null&&(p.side==='LONG'?mark<=p.sl:mark>=p.sl))return 'Stop loss';if(p.tp!==null&&(p.side==='LONG'?mark>=p.tp:mark<=p.tp))return 'Take profit';return null;}
+export function validateOrder(side:Position['side'],entry:number,allocation:number,available:number,tp:number|null,sl:number|null){if(!Number.isFinite(allocation)||allocation<=0||allocation>available)return 'Allocation must be positive and within available capital.';if(!Number.isFinite(entry)||entry<=0)return 'Reference price is unavailable.';if(tp!==null&&(!Number.isFinite(tp)||(side==='LONG'?tp<=entry:tp>=entry)))return 'Take profit must be beyond entry in the direction of the trade.';if(sl!==null&&(!Number.isFinite(sl)||sl<=0||(side==='LONG'?sl>=entry:sl<=entry)))return 'Stop loss must be beyond entry against the direction of the trade.';return null;}
+export const momentum=(percent:number)=>percent<30?'Pace is slow — take a lesson today to build momentum':percent>60?'Strong momentum — complete Module 4 next':'Consistency builds an edge — keep your learning on track';

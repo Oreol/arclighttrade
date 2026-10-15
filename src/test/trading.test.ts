@@ -1,0 +1,21 @@
+import {describe,it,expect} from 'vitest';
+import {pnl,trigger,validateOrder,momentum,type Position} from '@/features/trading';
+const p:Position={id:'1',asset:'XAU/USD',side:'LONG',entry:2500,units:4,allocation:10000,tp:2600,sl:2450,opened:'2026-10-14'};
+describe('Evaluation rules',()=>{
+ it('starts with 10000 dollar allocation at captured entry yielding four units',()=>expect(p.allocation/p.entry).toBe(4));
+ it('calculates long PnL as mark minus entry times units',()=>expect(pnl(p,2525)).toBe(100));
+ it('reverses PnL for short exposure',()=>expect(pnl({...p,side:'SHORT'},2525)).toBe(-100));
+ it('triggers a long stop at the exact level',()=>expect(trigger(p,2450)).toBe('Stop loss'));
+ it('triggers a long target at the exact level',()=>expect(trigger(p,2600)).toBe('Take profit'));
+ it('triggers a short stop on an adverse rising mark',()=>expect(trigger({...p,side:'SHORT',sl:2550,tp:2400},2551)).toBe('Stop loss'));
+ it('triggers a short target on a falling mark',()=>expect(trigger({...p,side:'SHORT',sl:2550,tp:2400},2399)).toBe('Take profit'));
+ it('does not close positions between stop and target',()=>expect(trigger(p,2505)).toBeNull());
+ it('rejects allocations exceeding available capital',()=>expect(validateOrder('LONG',2500,10001,10000,null,null)).not.toBeNull());
+ it('accepts 100 percent allocation',()=>expect(validateOrder('LONG',2500,10000,10000,2600,2450)).toBeNull());
+ it('rejects zero allocation',()=>expect(validateOrder('LONG',2500,0,10000,null,null)).not.toBeNull());
+ it('rejects long stops above entry',()=>expect(validateOrder('LONG',2500,1000,10000,null,2510)).not.toBeNull());
+ it('rejects short targets above entry',()=>expect(validateOrder('SHORT',2500,1000,10000,2510,null)).not.toBeNull());
+ it('uses low momentum below 30 percent',()=>expect(momentum(29)).toContain('Pace is slow'));
+ it('uses high momentum above 60 percent',()=>expect(momentum(61)).toContain('Strong momentum'));
+ it('does not mark exactly 60 percent as high',()=>expect(momentum(60)).not.toContain('Strong momentum'));
+});
