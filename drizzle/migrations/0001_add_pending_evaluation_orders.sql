@@ -1,0 +1,1 @@
+ALTER TABLE public.desk_accounts ADD COLUMN IF NOT EXISTS pending_orders jsonb NOT NULL DEFAULT '[]'::jsonb;

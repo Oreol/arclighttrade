@@ -21,6 +21,7 @@ export type Database = {
           display_name: string
           history: Json
           notifications: boolean
+          pending_orders: Json
           positions: Json
           updated_at: string
           user_id: string
@@ -31,6 +32,7 @@ export type Database = {
           display_name?: string
           history?: Json
           notifications?: boolean
+          pending_orders?: Json
           positions?: Json
           updated_at?: string
           user_id: string
@@ -41,6 +43,7 @@ export type Database = {
           display_name?: string
           history?: Json
           notifications?: boolean
+          pending_orders?: Json
           positions?: Json
           updated_at?: string
           user_id?: string

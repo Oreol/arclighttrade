@@ -11,5 +11,7 @@
 
 ## Application architecture
 - Use a shared application provider for reactive academy, signals, and execution state across file-based routes; persist signed-in user data through owner-scoped Cloud tables.
-- Keep simulation prices independent from the embedded TradingView chart and label them as reference prices, because the chart is not an execution feed.
+- Feed native Lightweight Charts from shared REST reference state and initialize charts only after hydration; chart bars represent observed session quotes, not fabricated historical candles.
+- Keep pending orders in the owner-scoped account JSON column and execute fills, margin reservations, and liquidations through shared pure trading helpers so all routes observe the same settlement.
+- Cross margin thresholds include free account capital; settlement losses remain capped at each position allocation to honor the evaluation loss rule.
 - Restrict administrative writes and analytics through database role policies; hiding navigation is not an authorization boundary.
