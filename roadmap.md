@@ -1,4 +1,5 @@
 # Arclight Academy
+- [ ] Upgrade native reference charts, pending orders, leveraged crypto and liquidation settlement; verify rules and terminal flows.
 - [x] Build desktop sidebar, mobile dock, dashboard and shared design system.
 - [x] Connect persistent curriculum, signals, accounts, and secure admin access.
 - [x] Build instant-price execution, positions and SL/TP management.
