@@ -1,0 +1,13 @@
+import {z} from 'zod';
+export const impactSchema=z.enum(['Bullish','Bearish','Neutral']);
+export const newsAnalysisSchema=z.object({summary:z.string(),impact:impactSchema,impactReason:z.string(),assets:z.array(z.string())}).strict();
+export type NewsAnalysis=z.infer<typeof newsAnalysisSchema>;
+export const marketNews=[
+ {id:'fed-dollar',category:'Forex',timestamp:'2026-10-16T18:30:00Z',sentiment:'Bullish',headline:'Dollar steadies as traders reassess the pace of Federal Reserve easing',body:'Resilient US consumer spending has led traders to scale back expectations for rapid interest-rate cuts. Higher US yields may support the dollar, while EUR/USD and GBP/USD remain sensitive to upcoming inflation releases.',assets:['EUR/USD','GBP/USD','USD/JPY']},
+ {id:'gold-yields',category:'Gold',timestamp:'2026-10-16T16:45:00Z',sentiment:'Bearish',headline:'Gold faces pressure as Treasury yields climb',body:'Rising Treasury yields increase the opportunity cost of holding non-yielding gold. Safe-haven demand remains a counterweight, leaving bullion sensitive to both rate expectations and geopolitical developments.',assets:['XAU/USD']},
+ {id:'bitcoin-demand',category:'Crypto',timestamp:'2026-10-16T15:20:00Z',sentiment:'Bullish',headline:'Bitcoin sentiment improves as institutional demand returns to focus',body:'Renewed interest in spot Bitcoin investment products has improved demand expectations. Traders continue to watch whether inflows persist, with broader risk appetite and liquidity still central to price direction.',assets:['BTC']},
+ {id:'ecb-euro',category:'Forex',timestamp:'2026-10-16T13:10:00Z',sentiment:'Neutral',headline:'Euro traders weigh slowing growth against persistent services inflation',body:'Softer euro-area growth signals argue for easier policy, but sticky services inflation complicates the outlook. The competing pressures leave EUR/USD exposed to changes in European Central Bank guidance and US data.',assets:['EUR/USD']},
+ {id:'crypto-volatility',category:'Crypto',timestamp:'2026-10-16T11:40:00Z',sentiment:'Neutral',headline:'Ether and Solana consolidate as traders monitor network activity',body:'Network usage and transaction demand remain key themes for Ether and Solana while prices consolidate. Without a clear change in liquidity or adoption, short-term moves may reflect broader crypto sentiment rather than a new fundamental trend.',assets:['ETH','SOL']},
+] as const;
+export function findNews(id:string){return marketNews.find(item=>item.id===id);}
+export function matchingSetups<T extends {asset:string;status:string}>(signals:T[],assets:readonly string[]){return signals.filter(signal=>signal.status==='Active'&&assets.includes(signal.asset));}
