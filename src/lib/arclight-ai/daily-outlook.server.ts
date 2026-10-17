@@ -10,18 +10,23 @@ export async function dailyOutlook(request:Request){
  const {data:cached,error:readError}=await db.from('daily_market_outlooks').select('*').eq('day',day).maybeSingle();
  if(readError)return {status:'failed',sentences:null,message:'Today’s saved outlook could not be checked.'};
  if(cached&&!canGenerate(cached.status))return {status:cached.status==='generating'&&cached.lease_until<new Date().toISOString()?'failed':cached.status,sentences:outlookSentences(cached.sentences),message:cached.message??(cached.status==='generating'?'Today’s briefing is being prepared.':'Today’s briefing is unavailable.')};
- const {data:block,error:blockError}=await db.from('ai_access_blocks').select('message').eq('model',model).maybeSingle();
- if(blockError||block)return {status:'paused',sentences:null,message:block?.message??'AI access could not be checked.'};
- // A credit/policy pause persists across dates and page loads. Only owner restoration clears it.
- const {data:paused,error:pauseError}=await db.from('daily_market_outlooks').select('message').eq('status','paused').limit(1).maybeSingle();
- if(pauseError||paused)return {status:'paused',sentences:null,message:paused?.message??'Briefing access could not be checked.'};
- const key=process.env['LOVABLE_API_KEY'];
- if(!key)return {status:'failed',sentences:null,message:'Arclight AI is not configured yet.'};
  const claim=await db.from('daily_market_outlooks').insert({day});
  if(claim.error){
   const {data:existing}=await db.from('daily_market_outlooks').select('*').eq('day',day).maybeSingle();
   return {status:existing?.status??'failed',sentences:outlookSentences(existing?.sentences),message:existing?.message??'Today’s briefing is being prepared.'};
  }
+ const stop=async(status:'paused'|'failed',message:string)=>{
+  const saved=await db.from('daily_market_outlooks').update({status,message}).eq('day',day);
+  if(saved.error)console.error('Daily briefing pause could not be saved');
+  return {status,sentences:null,message};
+ };
+ const {data:block,error:blockError}=await db.from('ai_access_blocks').select('message').eq('model',model).maybeSingle();
+ if(blockError||block)return stop('paused',block?.message??'AI access could not be checked.');
+ // A credit/policy pause persists across dates and page loads. Only owner restoration clears it.
+ const {data:paused,error:pauseError}=await db.from('daily_market_outlooks').select('message').eq('status','paused').limit(1).maybeSingle();
+ if(pauseError||paused)return stop('paused',paused?.message??'Briefing access could not be checked.');
+ const key=process.env['LOVABLE_API_KEY'];
+ if(!key)return stop('failed','Arclight AI is not configured yet.');
  try{
   const run=createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(request));
   const provider=createOpenAI({baseURL:'https://ai.gateway.lovable.dev/v1',apiKey:key,headers:{'Lovable-API-Key':key,'X-Lovable-AIG-SDK':'vercel-ai-sdk'},fetch:run.fetch});
@@ -35,9 +40,10 @@ export async function dailyOutlook(request:Request){
   let message='Today’s briefing could not be completed. No automatic retry was made.';let status='failed';
   if(APICallError.isInstance(error)){
    message=error.message;
-   try{const body=JSON.parse(error.responseBody??'{}');message=body.message??body.error?.message??message;}catch{/* retain gateway message */}
+   let type='';
+   try{const body=JSON.parse(error.responseBody??'{}');message=body.message??body.error?.message??message;type=body.type??body.error?.type??'';}catch{/* retain gateway message */}
    if(error.statusCode===402||error.statusCode===403)status='paused';
-   if(error.statusCode===403){
+   if(error.statusCode===403&&!['provider_not_available_in_region','model_requires_retention_consent','model_vendor_not_enabled','credit_limit_reached'].includes(type)){
     const saved=await db.from('ai_access_blocks').upsert({model,message});if(saved.error)console.error('AI block persistence failed');
    }
   }
