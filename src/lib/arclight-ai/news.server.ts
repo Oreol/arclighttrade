@@ -18,7 +18,7 @@ export async function interpretNews(news:typeof marketNews[number],client:Supaba
   const analysis=await call.result.output;
   if(!analysis)return {ok:false as const,status:422,message:'Arclight AI returned no analysis. No automatic retry was made.'};
   const assets=analysis.assets.filter(asset=>(news.assets as readonly string[]).includes(asset));
-  const [signals,lessons]=await Promise.all([client.from('signals').select('id,asset,status').eq('status','Active'),client.from('lessons').select('id,title,module,module_name').order('sort_order')]);
+  const [signals,lessons]=await Promise.all([client.from('signals').select('id,asset'),client.from('lessons').select('id,title,module,module_name').order('sort_order')]);
   const setups=matchingSetups(signals.data??[],assets);
   const lesson=lessons.data?.find(l=>l.id==='f2')??lessons.data?.[0]??null;
   return {ok:true as const,analysis:{...analysis,assets},setups,lesson};

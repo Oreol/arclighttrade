@@ -10,4 +10,4 @@ export const marketNews=[
  {id:'crypto-volatility',category:'Crypto',timestamp:'2026-10-16T11:40:00Z',sentiment:'Neutral',headline:'Ether and Solana consolidate as traders monitor network activity',body:'Network usage and transaction demand remain key themes for Ether and Solana while prices consolidate. Without a clear change in liquidity or adoption, short-term moves may reflect broader crypto sentiment rather than a new fundamental trend.',assets:['ETH','SOL']},
 ] as const;
 export function findNews(id:string){return marketNews.find(item=>item.id===id);}
-export function matchingSetups<T extends {asset:string;status:string}>(signals:T[],assets:readonly string[]){return signals.filter(signal=>signal.status==='Active'&&assets.includes(signal.asset));}
+export function matchingSetups<T extends {asset:string}>(signals:T[],assets:readonly string[]){return signals.filter(signal=>assets.includes(signal.asset));}
