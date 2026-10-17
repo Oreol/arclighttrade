@@ -1,5 +1,5 @@
 # Arclight Academy
-- [ ] Add five preset Market News stories and secure Arclight AI interpretation with verified desk/lesson links.
+- [x] Add five preset Market News stories and secure Arclight AI interpretation; real signed-in analysis, lesson navigation and mobile layout verified.
 - [x] Upgrade native reference charts, pending orders, leveraged crypto and liquidation settlement; 48 tests and signed-in open/close/pending persistence checks passed.
 - [ ] Connect genuine intraday forex quotes — requires a market-data service credential; daily REST reference rates remain explicitly labeled.
 - [x] Build desktop sidebar, mobile dock, dashboard and shared design system.
