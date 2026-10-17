@@ -32,6 +32,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_market_outlooks: {
+        Row: {
+          created_at: string
+          day: string
+          lease_until: string
+          message: string | null
+          sentences: Json | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          lease_until?: string
+          message?: string | null
+          sentences?: Json | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          lease_until?: string
+          message?: string | null
+          sentences?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
       desk_accounts: {
         Row: {
           balance: number
