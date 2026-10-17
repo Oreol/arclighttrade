@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as MarketNewsRouteImport } from './routes/market-news'
 import { Route as PaperDeskRouteImport } from './routes/paper-desk'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SignalsRouteImport } from './routes/signals'
@@ -29,6 +30,11 @@ const AcademyRoute = AcademyRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketNewsRoute = MarketNewsRouteImport.update({
+  id: '/market-news',
+  path: '/market-news',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaperDeskRoute = PaperDeskRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRoute
   '/admin': typeof AdminRoute
+  '/market-news': typeof MarketNewsRoute
   '/paper-desk': typeof PaperDeskRoute
   '/settings': typeof SettingsRoute
   '/signals': typeof SignalsRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRoute
   '/admin': typeof AdminRoute
+  '/market-news': typeof MarketNewsRoute
   '/paper-desk': typeof PaperDeskRoute
   '/settings': typeof SettingsRoute
   '/signals': typeof SignalsRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRoute
   '/admin': typeof AdminRoute
+  '/market-news': typeof MarketNewsRoute
   '/paper-desk': typeof PaperDeskRoute
   '/settings': typeof SettingsRoute
   '/signals': typeof SignalsRoute
@@ -75,14 +84,28 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/academy' | '/admin' | '/paper-desk' | '/settings' | '/signals'
+    | '/'
+    | '/academy'
+    | '/admin'
+    | '/market-news'
+    | '/paper-desk'
+    | '/settings'
+    | '/signals'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/academy' | '/admin' | '/paper-desk' | '/settings' | '/signals'
+  to:
+    | '/'
+    | '/academy'
+    | '/admin'
+    | '/market-news'
+    | '/paper-desk'
+    | '/settings'
+    | '/signals'
   id:
     | '__root__'
     | '/'
     | '/academy'
     | '/admin'
+    | '/market-news'
     | '/paper-desk'
     | '/settings'
     | '/signals'
@@ -92,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcademyRoute: typeof AcademyRoute
   AdminRoute: typeof AdminRoute
+  MarketNewsRoute: typeof MarketNewsRoute
   PaperDeskRoute: typeof PaperDeskRoute
   SettingsRoute: typeof SettingsRoute
   SignalsRoute: typeof SignalsRoute
@@ -118,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market-news': {
+      id: '/market-news'
+      path: '/market-news'
+      fullPath: '/market-news'
+      preLoaderRoute: typeof MarketNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paper-desk': {
@@ -148,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcademyRoute: AcademyRoute,
   AdminRoute: AdminRoute,
+  MarketNewsRoute: MarketNewsRoute,
   PaperDeskRoute: PaperDeskRoute,
   SettingsRoute: SettingsRoute,
   SignalsRoute: SignalsRoute,
