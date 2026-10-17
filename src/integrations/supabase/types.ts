@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_access_blocks: {
+        Row: {
+          created_at: string
+          message: string
+          model: string
+        }
+        Insert: {
+          created_at?: string
+          message: string
+          model: string
+        }
+        Update: {
+          created_at?: string
+          message?: string
+          model?: string
+        }
+        Relationships: []
+      }
       desk_accounts: {
         Row: {
           balance: number

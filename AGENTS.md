@@ -15,3 +15,5 @@
 - Keep pending orders in the owner-scoped account JSON column and execute fills, margin reservations, and liquidations through shared pure trading helpers so all routes observe the same settlement.
 - Cross margin thresholds include free account capital; settlement losses remain capped at each position allocation to honor the evaluation loss rule.
 - Restrict administrative writes and analytics through database role policies; hiding navigation is not an authorization boundary.
+- Keep news scenarios in a shared preset catalog; authenticate news interpretation server functions, keep gateway helpers server-only, and resolve desk/lesson links from the user's accessible live catalog to avoid invented setups.
+- Persist terminal AI provider access blocks in the service-only access table and fail closed when the block cannot be checked; clear blocks only after access is restored.

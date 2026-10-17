@@ -15,6 +15,13 @@
       "when": 1792193963099,
       "tag": "0001_add_pending_evaluation_orders",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792198354131,
+      "tag": "0002_add_ai_access_blocks",
+      "breakpoints": true
     }
   ]
 }
