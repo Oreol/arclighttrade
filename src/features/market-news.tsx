@@ -4,7 +4,7 @@ import {useServerFn} from '@tanstack/react-start';
 import {Newspaper,ArrowUpRight,ArrowRight,AudioLines,Clock,BookOpen,Radio,LoaderCircle,ShieldCheck} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Sheet,SheetContent,SheetHeader,SheetTitle,SheetDescription} from '@/components/ui/sheet';
-import {useDesk} from './desk-provider';
+import {useDesk} from './desk-context';
 import {marketNews} from './market-news-data';
 import {analyzeNews} from './market-news.functions';
 type Result=Awaited<ReturnType<typeof analyzeNews>>;

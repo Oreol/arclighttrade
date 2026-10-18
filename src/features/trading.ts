@@ -23,11 +23,9 @@ export function trigger(p:Position,mark:number){if(p.liquidation!==undefined&&(p
 export function validateOrder(side:Position['side'],entry:number,allocation:number,available:number,tp:number|null,sl:number|null){if(!Number.isFinite(entry)||entry<=0)return 'Reference price is unavailable.';if(!Number.isFinite(allocation)||allocation<=0||allocation>available)return 'Allocation must be positive and within available capital.';if(tp!==null&&(!Number.isFinite(tp)||tp<=0||(side==='LONG'?tp<=entry:tp>=entry)))return 'Take profit must be beyond entry in the direction of the trade.';if(sl!==null&&(!Number.isFinite(sl)||sl<=0||(side==='LONG'?sl>=entry:sl<=entry)))return 'Stop loss must be beyond entry against the direction of the trade.';return null;}
 export const momentum=(percent:number)=>percent<30?'Pace is slow — take a lesson today to build momentum':percent>60?'Strong momentum — complete Module 4 next':'Consistency builds an edge — keep your learning on track';
 /** Fetch live quotes over REST: Binance for crypto, Frankfurter for FX, gold-api for XAU. */
-export async function fetchQuotes():Promise<Partial<Record<Asset,number>>>{const out:Partial<Record<Asset,number>>={};await Promise.allSettled([
- fetch('https://api.binance.com/api/v3/ticker/price?symbols='+encodeURIComponent('["BTCUSDT","ETHUSDT","SOLUSDT"]'),{signal:AbortSignal.timeout(2500)}).then(r=>{if(!r.ok)throw new Error('Quote unavailable');return r.json();}).then((rows:{symbol:string;price:string}[])=>{for(const r of rows){const a=({BTCUSDT:'BTC',ETHUSDT:'ETH',SOLUSDT:'SOL'} as Record<string,Asset>)[r.symbol];if(a)out[a]=Number(r.price);}}),
- fetch('https://api.frankfurter.dev/v1/latest?from=USD&to=EUR,GBP,JPY',{signal:AbortSignal.timeout(2500)}).then(r=>{if(!r.ok)throw new Error('Quote unavailable');return r.json();}).then((d:{rates:{EUR:number;GBP:number;JPY:number}})=>{out['EUR/USD']=1/d.rates.EUR;out['GBP/USD']=1/d.rates.GBP;out['USD/JPY']=d.rates.JPY;}),
- fetch('https://api.gold-api.com/price/XAU',{signal:AbortSignal.timeout(2500)}).then(r=>{if(!r.ok)throw new Error('Quote unavailable');return r.json();}).then((d:{price:number})=>{if(d.price)out['XAU/USD']=Number(d.price);}),
-]);return out;}
+export async function fetchQuotes():Promise<Partial<Record<Asset,number>>>{const {fetchMarketQuotes}=await import('./market-quotes');const q=await fetchMarketQuotes();return Object.fromEntries(Object.entries(q).map(([a,v])=>[a,v.value]));}
+/** USD collateral converted to lots at the same 1:100 margin model. */
+export function lotsFromCapital(asset:Asset,capital:number,entry:number){const perLot=margin(asset,1,entry);return perLot>0?capital/perLot:0;}
 
 export type OrderType='Market'|'Buy Limit'|'Sell Limit'|'Buy Stop'|'Sell Stop'|'Limit'|'Conditional';
 export type OrderOptions={type:OrderType;target:number|null;leverage:number;marginMode:'Cross'|'Isolated';sizing:'USD'|'Units'};

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as JournalRouteImport } from './routes/journal'
 import { Route as MarketNewsRouteImport } from './routes/market-news'
 import { Route as PaperDeskRouteImport } from './routes/paper-desk'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -30,6 +31,11 @@ const AcademyRoute = AcademyRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketNewsRoute = MarketNewsRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRoute
   '/admin': typeof AdminRoute
+  '/journal': typeof JournalRoute
   '/market-news': typeof MarketNewsRoute
   '/paper-desk': typeof PaperDeskRoute
   '/settings': typeof SettingsRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRoute
   '/admin': typeof AdminRoute
+  '/journal': typeof JournalRoute
   '/market-news': typeof MarketNewsRoute
   '/paper-desk': typeof PaperDeskRoute
   '/settings': typeof SettingsRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/academy': typeof AcademyRoute
   '/admin': typeof AdminRoute
+  '/journal': typeof JournalRoute
   '/market-news': typeof MarketNewsRoute
   '/paper-desk': typeof PaperDeskRoute
   '/settings': typeof SettingsRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/academy'
     | '/admin'
+    | '/journal'
     | '/market-news'
     | '/paper-desk'
     | '/settings'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/academy'
     | '/admin'
+    | '/journal'
     | '/market-news'
     | '/paper-desk'
     | '/settings'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/academy'
     | '/admin'
+    | '/journal'
     | '/market-news'
     | '/paper-desk'
     | '/settings'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcademyRoute: typeof AcademyRoute
   AdminRoute: typeof AdminRoute
+  JournalRoute: typeof JournalRoute
   MarketNewsRoute: typeof MarketNewsRoute
   PaperDeskRoute: typeof PaperDeskRoute
   SettingsRoute: typeof SettingsRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/market-news': {
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcademyRoute: AcademyRoute,
   AdminRoute: AdminRoute,
+  JournalRoute: JournalRoute,
   MarketNewsRoute: MarketNewsRoute,
   PaperDeskRoute: PaperDeskRoute,
   SettingsRoute: SettingsRoute,

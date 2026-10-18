@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Activity,X} from 'lucide-react';
 import {Button} from '@/components/ui/button';
-import {useDesk} from './desk-provider';
+import {useDesk} from './desk-context';
 import {money,price,pnl,pips,roi,liquidationPrice} from './trading';
 const signed=(v:number,d=1)=>`${v>=0?'+':''}${v.toFixed(d)}`;
 const tone=(v:number)=>v<0?'text-destructive':'text-ice';
