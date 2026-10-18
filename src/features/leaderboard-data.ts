@@ -1,0 +1,5 @@
+export const COHORT_SIZE=5420;
+export const PERSONAL_RANK=57;
+export const COHORT_DISCLOSURE='Simulated Cohort Disclosure: Rankings reflect simulated prop evaluation metrics (Net Return, Risk-to-Reward Ratio, and Discipline Score). All peer profiles represent synthetic benchmark accounts generated for evaluation modeling. No real capital is deployed.';
+export const benchmarkAccounts=Array.from({length:COHORT_SIZE-1},(_,i)=>{const rank=i+1>=PERSONAL_RANK?i+2:i+1;return {id:`benchmark-${rank}`,rank,name:`Desk ${String(rank).padStart(4,'0')}`,tier:rank<=50?'Master Desk':'Senior Prop',discipline:Math.max(30,100-Math.floor(rank/80)),winRate:Math.max(30,78-Math.floor(rank/120)),netReturn:Number((24-rank*.007).toFixed(2)),rising:rank%3===0,cohort:rank%7===1};});
+export function benchmarkRows(filter:string){return benchmarkAccounts.filter(t=>filter==='Rising Traders'?t.rising:filter==='My Cohort'?t.cohort:true).slice(0,10);}

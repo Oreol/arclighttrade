@@ -1,4 +1,8 @@
 # Arclight Academy
+- [x] Isolate stable shared account context; all seven main pages load without the provider crash, live refresh retains context and navigation, and all 74 tests pass.
+- [x] Replace crypto quotes with Coinbase/CoinGecko and disclosed seed rates; signed-in BTC/ETH/SOL instant open/close verified with both providers blocked, plus Forex USD/lot conversion.
+- [x] Add auto-synced Journal, saved reflections and discipline metrics; signed-in notes, tags and checklist saved and read back after reload.
+- [x] Add disclosed 5,420-member benchmark leaderboard and navigation; filter changes, personal placement and mobile layout verified; all 73 tests passed. No additional AI assistant built.
 - [x] Restore full TradingView technical analysis and add a three-sentence once-daily cached Dashboard outlook; signed-in generation, cached reload, asset/timeframe changes, RSI/EMA/MACD and mobile layout verified; 56 tests passed.
 - [x] Add five preset Market News stories and secure Arclight AI interpretation; real signed-in analysis, lesson navigation and mobile layout verified.
 - [x] Upgrade native reference charts, pending orders, leveraged crypto and liquidation settlement; 48 tests and signed-in open/close/pending persistence checks passed.
