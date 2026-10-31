@@ -28,7 +28,7 @@ export function ProModal(){
   {!desk.user?<Button onClick={()=>{desk.setProOpen(false);desk.setAuthOpen(true);}}>Sign in to subscribe</Button>
   :desk.pro?<p className="pro-active"><ShieldCheck size={16}/>Your Arclight Pro access is active.</p>
   :busy?<div className="analysis-loading" role="status"><LoaderCircle className="animate-spin"/><span>Activating your subscription…</span></div>
-  :<div className="pro-checkout"><PayPalScriptProvider options={{clientId:paypalClientId(import.meta.env.VITE_PAYPAL_CLIENT_ID),currency:'USD',intent:'capture'}}>
+  :<div className="pro-checkout"><PayPalScriptProvider options={{clientId:paypalClientId(import.meta.env['VITE_PAYPAL_CLIENT_ID']),currency:'USD',intent:'capture'}}>
    <PayPalButtons style={{layout:'vertical',color:'blue',shape:'rect',label:'subscribe'}}
     createOrder={(_data,actions)=>actions.order.create({intent:'CAPTURE',purchase_units:[{description:PRO_NAME,amount:{currency_code:'USD',value:PRO_PRICE}}]})}
     onApprove={async(data,actions)=>{await actions.order?.capture();await approve(data.orderID);}}
