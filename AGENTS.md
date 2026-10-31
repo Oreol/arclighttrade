@@ -23,3 +23,4 @@
 - Store trade reflections inside the existing owner-scoped account history JSON alongside settled trades so journal entries stay synchronized without a second trade ledger.
 - Quote state includes source and last successful timestamp; initialize positive offline references and preserve last good values across feed failures so reference execution never depends on network availability.
 - Generate synthetic leaderboard peers in a dedicated deterministic catalog; fixed modeled personal placement is explicitly separate from real personal history metrics to avoid presenting a fabricated live competition.
+- Arclight Pro access is the server-granted subscriber role; checkout approval calls an authenticated server function that verifies the PayPal order when a server secret exists, and premium reads/AI analysis are enforced by role checks, not UI state.

@@ -6,6 +6,8 @@
 - [x] Restore full TradingView technical analysis and add a three-sentence once-daily cached Dashboard outlook; signed-in generation, cached reload, asset/timeframe changes, RSI/EMA/MACD and mobile layout verified; 56 tests passed.
 - [x] Add five preset Market News stories and secure Arclight AI interpretation; real signed-in analysis, lesson navigation and mobile layout verified.
 - [x] Upgrade native reference charts, pending orders, leveraged crypto and liquidation settlement; 48 tests and signed-in open/close/pending persistence checks passed.
+- [x] Add Arclight Pro PayPal Sandbox modal gating premium signals and AI news analysis.
+- [ ] Verify PayPal order server-side — needs PAYPAL_CLIENT_ID/PAYPAL_CLIENT_SECRET sandbox credentials.
 - [ ] Connect genuine intraday forex quotes — requires a market-data service credential; daily REST reference rates remain explicitly labeled.
 - [x] Build desktop sidebar, mobile dock, dashboard and shared design system.
 - [x] Connect persistent curriculum, signals, accounts, and secure admin access.
