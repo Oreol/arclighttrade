@@ -3,6 +3,7 @@ import {getRequest} from '@tanstack/react-start/server';
 import {requireSupabaseAuth} from '@/integrations/supabase/auth-middleware';
 import {z} from 'zod';
 import {findNews} from './market-news-data';
+import {hasProAccess} from './subscription-data';
 
 export const analyzeNews=createServerFn({method:'POST'})
  .middleware([requireSupabaseAuth])

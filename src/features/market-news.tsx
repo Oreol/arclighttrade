@@ -13,7 +13,8 @@ export function MarketNews(){
  const [selected,setSelected]=useState<typeof marketNews[number]|null>(null);
  const [result,setResult]=useState<Result|null>(null);const [busy,setBusy]=useState(false);const requestId=useRef(0);
  async function ask(story:typeof marketNews[number]){
-  const id=++requestId.current;setSelected(story);setResult(null);
+  if(desk.user&&!desk.pro){setSelected(null);desk.setProOpen(true);return;}
+   const id=++requestId.current;setSelected(story);setResult(null);
   if(!desk.user){setBusy(false);return;}
   setBusy(true);
   try{const response=await analyze({data:{newsId:story.id}});if(id===requestId.current)setResult(response);}
