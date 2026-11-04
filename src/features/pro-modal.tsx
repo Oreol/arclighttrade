@@ -1,12 +1,12 @@
 import {useState} from 'react';
 import {PayPalScriptProvider,PayPalButtons} from '@paypal/react-paypal-js';
 import {useServerFn} from '@tanstack/react-start';
-import {Check,LoaderCircle,ShieldCheck} from 'lucide-react';
+import {Check,LoaderCircle,ShieldCheck,Zap} from 'lucide-react';
 import {toast} from 'sonner';
 import {Button} from '@/components/ui/button';
 import {Dialog,DialogContent,DialogDescription,DialogTitle} from '@/components/ui/dialog';
 import {useDesk} from './desk-context';
-import {activatePro} from './subscription.functions';
+import {activatePro,activateProSandbox} from './subscription.functions';
 import {PRO_NAME,PRO_PRICE,paypalClientId} from './subscription-data';
 
 const benefits=['Premium Desk Alpha Briefs with entry zones, invalidation and tiered targets','Arclight AI interpretation for every Market News briefing','Analyst-reviewed setups across Forex, Gold and Crypto'];
@@ -34,6 +34,7 @@ export function ProModal(){
     onApprove={async(data,actions)=>{await actions.order?.capture();await approve(data.orderID);}}
     onError={()=>toast.error('PayPal checkout could not be completed.')}/>
   </PayPalScriptProvider></div>}
+  {desk.user&&!desk.pro&&!busy&&<div className="pro-demo"><Button variant="outline" onClick={()=>void approve(null)}><Zap size={15}/>Simulate Sandbox Approval (Demo)</Button><small>Runs the same approval flow without a PayPal sandbox login.</small></div>}
   <p className="analysis-disclaimer">PayPal Sandbox checkout · Your Simulated Evaluation Capital is unaffected.</p>
  </DialogContent></Dialog>;
 }
