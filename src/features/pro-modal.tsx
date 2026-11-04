@@ -12,10 +12,10 @@ import {PRO_NAME,PRO_PRICE,paypalClientId} from './subscription-data';
 const benefits=['Premium Desk Alpha Briefs with entry zones, invalidation and tiered targets','Arclight AI interpretation for every Market News briefing','Analyst-reviewed setups across Forex, Gold and Crypto'];
 
 export function ProModal(){
- const desk=useDesk();const activate=useServerFn(activatePro);const [busy,setBusy]=useState(false);
- async function approve(orderId:string){
+ const desk=useDesk();const activate=useServerFn(activatePro);const sandbox=useServerFn(activateProSandbox);const [busy,setBusy]=useState(false);
+ async function approve(orderId:string|null){
   setBusy(true);
-  try{const result=await activate({data:{orderId}});if(!result.ok){toast.error(result.message);return;}await desk.refreshAccess();desk.setProOpen(false);toast.success('Welcome to Arclight Pro!');}
+  try{const result=orderId?await activate({data:{orderId}}):await sandbox();if(!result.ok){toast.error(result.message);return;}await desk.refreshAccess();desk.setProOpen(false);toast.success('Welcome to Arclight Pro!');}
   catch{toast.error('Your subscription could not be activated. Please try again.');}
   finally{setBusy(false);}
  }
