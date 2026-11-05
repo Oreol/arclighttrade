@@ -17,6 +17,7 @@
 - Cross margin thresholds include free account capital; settlement losses remain capped at each position allocation to honor the evaluation loss rule.
 - Restrict administrative writes and analytics through database role policies; hiding navigation is not an authorization boundary.
 - Keep news scenarios in a shared preset catalog; authenticate news interpretation server functions, keep gateway helpers server-only, and resolve desk/lesson links from the user's accessible live catalog to avoid invented setups.
+- Validate browser news-analysis snapshots and scope them to the signed-in owner; restore only with current Pro access so cached interpretation never grants premium privileges.
 - Persist terminal AI provider access blocks in the service-only access table and fail closed when the block cannot be checked; clear blocks only after access is restored.
 - Cache a single global outlook by UTC day; atomically claim the day before generation, preserve failed/paused attempts without automatic replay, and allow only server-owned cache writes to prevent duplicate billing across users and reloads.
 
