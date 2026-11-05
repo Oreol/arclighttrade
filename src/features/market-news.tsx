@@ -1,4 +1,4 @@
-import {useRef,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {Link} from '@tanstack/react-router';
 import {useServerFn} from '@tanstack/react-start';
 import {Newspaper,ArrowUpRight,ArrowRight,AudioLines,Clock,BookOpen,Radio,LoaderCircle,ShieldCheck} from 'lucide-react';
@@ -7,18 +7,31 @@ import {Sheet,SheetContent,SheetHeader,SheetTitle,SheetDescription} from '@/comp
 import {useDesk} from './desk-context';
 import {marketNews} from './market-news-data';
 import {analyzeNews} from './market-news.functions';
+import {readNewsAnalysis,writeNewsAnalysis,type SavedNewsAnalysis} from './news-analysis-storage';
+import {findNews} from './market-news-data';
 type Result=Awaited<ReturnType<typeof analyzeNews>>;
 export function MarketNews(){
  const desk=useDesk();const analyze=useServerFn(analyzeNews);
  const [selected,setSelected]=useState<typeof marketNews[number]|null>(null);
  const [result,setResult]=useState<Result|null>(null);const [busy,setBusy]=useState(false);const requestId=useRef(0);
+  const saved=useRef<SavedNewsAnalysis|null>(null);const owner=desk.user?.id;
+  useEffect(()=>{
+   ++requestId.current;setBusy(false);setSelected(null);setResult(null);saved.current=null;
+   if(!owner||!desk.pro)return;
+   const previous=readNewsAnalysis(localStorage,owner);saved.current=previous;
+   if(previous){setResult(previous.result);if(previous.open)setSelected(findNews(previous.storyId)??null);}
+   return()=>{++requestId.current;};
+  },[owner,desk.pro]);
+  function persist(value:SavedNewsAnalysis){saved.current=value;if(owner&&desk.pro)writeNewsAnalysis(localStorage,owner,value);}
  async function ask(story:typeof marketNews[number]){
   if(desk.user&&!desk.pro){setSelected(null);desk.setProOpen(true);return;}
+   if(saved.current?.storyId===story.id&&saved.current.result?.ok){setSelected(story);setResult(saved.current.result);setBusy(false);persist({...saved.current,open:true});return;}
    const id=++requestId.current;setSelected(story);setResult(null);
   if(!desk.user){setBusy(false);return;}
+   persist({version:1,storyId:story.id,open:true,result:null});
   setBusy(true);
-  try{const response=await analyze({data:{newsId:story.id}});if(id===requestId.current)setResult(response);}
-  catch{if(id===requestId.current)setResult({ok:false,status:503,message:'The analysis request could not be completed. Please check your connection.'});}
+   try{const response=await analyze({data:{newsId:story.id}});if(id===requestId.current){setResult(response);persist({version:1,storyId:story.id,open:saved.current?.open??true,result:response});}}
+   catch{if(id===requestId.current){const failure={ok:false as const,status:503,message:'The analysis request could not be completed. Please check your connection.'};setResult(failure);persist({version:1,storyId:story.id,open:saved.current?.open??true,result:failure});}}
   finally{if(id===requestId.current)setBusy(false);}
  }
  return <>
@@ -31,7 +44,7 @@ export function MarketNews(){
    <Button variant="outline" onClick={()=>void ask(story)}><AudioLines size={16}/>Ask Arclight AI<ArrowUpRight size={15}/></Button>
   </article>)}</div>
   <div className="risk-notice"><ShieldCheck size={18}/><p>Preset scenarios, not live reporting. AI interpretation is educational and may be inaccurate. Not investment advice.</p></div>
-  <Sheet open={Boolean(selected)} onOpenChange={open=>{if(!open)setSelected(null);}}><SheetContent className="news-drawer" side="right">
+   <Sheet open={Boolean(selected)} onOpenChange={open=>{if(!open){setSelected(null);if(saved.current)persist({...saved.current,open:false});}}}><SheetContent className="news-drawer" side="right">
    <SheetHeader><span className="ai-identity"><AudioLines size={22}/> ARCLIGHT INTELLIGENCE</span><SheetTitle>Arclight AI</SheetTitle><SheetDescription>News interpretation · Preset scenario</SheetDescription></SheetHeader>
    <h2 className="analysis-headline">{selected?.headline}</h2>
    {!desk.user?<div className="analysis-section"><p>Sign in to request your analysis.</p><Button onClick={()=>{setSelected(null);desk.setAuthOpen(true);}}>Sign in<ArrowRight/></Button></div>:busy?<div className="analysis-loading" role="status"><LoaderCircle className="animate-spin"/><span>Interpreting this briefing…</span></div>:result?.ok?<div aria-live="polite">

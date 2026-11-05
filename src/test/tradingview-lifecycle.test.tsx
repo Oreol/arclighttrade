@@ -1,0 +1,10 @@
+import {act,cleanup,render,screen,fireEvent} from '@testing-library/react';
+import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
+import {TradingViewChart} from '@/features/tradingview-chart';
+describe('TradingView initialization',()=>{
+ beforeEach(()=>{vi.useFakeTimers();vi.spyOn(HTMLCanvasElement.prototype,'getContext').mockReturnValue(null);});
+ afterEach(()=>{cleanup();vi.restoreAllMocks();vi.useRealTimers();});
+ it('preserves the widget on parent quote rerenders and reloads only for changed asset or timeframe',()=>{const view=render(<TradingViewChart asset="BTC"/>);const script=view.container.querySelector('script');view.rerender(<TradingViewChart asset="BTC"/>);expect(view.container.querySelector('script')).toBe(script);view.rerender(<TradingViewChart asset="ETH"/>);expect(view.container.querySelector('script')).not.toBe(script);const ethScript=view.container.querySelector('script');fireEvent.click(screen.getByRole('button',{name:'5m'}));expect(view.container.querySelector('script')).not.toBe(ethScript);});
+ it('stops loading when the inserted iframe loads',async()=>{const view=render(<TradingViewChart asset="BTC"/>);const host=view.container.querySelector('.tradingview-widget-container');if(!host)throw new Error('Missing host');const frame=document.createElement('iframe');await act(async()=>{host.append(frame);});act(()=>frame.dispatchEvent(new Event('load')));expect(screen.queryByRole('status')).toBeNull();act(()=>vi.advanceTimersByTime(15000));expect(screen.queryByRole('alert')).toBeNull();});
+ it('bounds loading and supports a fresh manual retry',()=>{const view=render(<TradingViewChart asset="BTC"/>);const script=view.container.querySelector('script');act(()=>vi.advanceTimersByTime(15000));expect(screen.queryByRole('status')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'Retry chart'}));expect(view.container.querySelector('script')).not.toBe(script);expect(screen.queryByRole('status')).not.toBeNull();});
+});
