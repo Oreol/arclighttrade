@@ -1,5 +1,5 @@
 # Arclight Academy
-- [ ] Restore owner-scoped news analysis after navigation/reload and verify chart lifecycle loading improvements without changing execution or checkout.
+- [x] Restore owner-scoped news analysis after navigation/reload; real subscriber interpretation restored on return and refresh, desktop/mobile chart switching verified, and all 86 tests passed without execution or checkout code changes.
 - [x] Isolate stable shared account context; all seven main pages load without the provider crash, live refresh retains context and navigation, and all 74 tests pass.
 - [x] Replace crypto quotes with Coinbase/CoinGecko and disclosed seed rates; signed-in BTC/ETH/SOL instant open/close verified with both providers blocked, plus Forex USD/lot conversion.
 - [x] Add auto-synced Journal, saved reflections and discipline metrics; signed-in notes, tags and checklist saved and read back after reload.
