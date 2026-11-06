@@ -42,3 +42,15 @@ export const activateProSandbox=createServerFn({method:'POST'})
   if(process.env['PAYPAL_CLIENT_SECRET'])return {ok:false as const,message:'Sandbox approval is disabled while verified PayPal checkout is active.'};
   return grantPro(context.userId);
  });
+
+// Self-service reset: the verified caller is the only account this endpoint can change.
+export const resetProSubscription=createServerFn({method:'POST'})
+ .middleware([requireSupabaseAuth])
+ .handler(async({context})=>{
+  const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
+  const cancelled=await supabaseAdmin.from('subscriptions').update({status:'cancelled'}).eq('user_id',context.userId).eq('status','active');
+  if(cancelled.error)return {ok:false as const,message:'Your subscription could not be reset. Please try again.'};
+  const removed=await supabaseAdmin.from('user_roles').delete().eq('user_id',context.userId).eq('role','subscriber');
+  if(removed.error)return {ok:false as const,message:'Your Pro access could not be reset. Please try again.'};
+  return {ok:true as const};
+ });
