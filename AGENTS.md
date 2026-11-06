@@ -12,7 +12,7 @@
 ## Application architecture
 - Keep the shared desk context and consumer hook in a non-component module; provider and every page import that module so Fast Refresh cannot replace context identity independently of the mounted provider.
 - Use a shared application provider for reactive academy, signals, and execution state across file-based routes; persist signed-in user data through owner-scoped Cloud tables.
-- Embed the official TradingView Advanced Chart after hydration and remount by asset; keep external analysis quotes separate from the shared REST execution state so chart loading never blocks trading.
+- Embed the official TradingView Advanced Chart once per visited asset in a shell-level layer positioned over the Paper Desk slot (never rebuilt on interval or route changes, so drawings survive); keep external analysis quotes separate from the shared REST execution state so chart loading never blocks trading.
 - Keep pending orders in the owner-scoped account JSON column and execute fills, margin reservations, and liquidations through shared pure trading helpers so all routes observe the same settlement.
 - Cross margin thresholds include free account capital; settlement losses remain capped at each position allocation to honor the evaluation loss rule.
 - Restrict administrative writes and analytics through database role policies; hiding navigation is not an authorization boundary.
