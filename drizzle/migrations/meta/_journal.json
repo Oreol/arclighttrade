@@ -29,6 +29,13 @@
       "when": 1792199088784,
       "tag": "0003_daily_market_outlooks",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794370671233,
+      "tag": "0004_daily_trade_risk_limit",
+      "breakpoints": true
     }
   ]
 }
