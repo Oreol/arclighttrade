@@ -1,9 +1,9 @@
 import {memo,useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
-import {LoaderCircle} from 'lucide-react';
+import {LoaderCircle,X} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {tradingViewSymbols} from './tradingview-config';
-import {useChartHost} from './chart-host';
+import {chartHost,useChartHost} from './chart-host';
 import type {Asset} from './trading';
 function cssColor(name:string){
  const canvas=document.createElement('canvas');canvas.width=1;canvas.height=1;
@@ -37,11 +37,27 @@ export const TradingViewChart=memo(function TradingViewChart({asset}:{asset:Asse
 type Box={top:number;left:number;width:number;height:number};
 // Mounted once in the shell. Widgets stay alive (hidden off-screen) while the user is on other pages.
 export function PersistentCharts(){
- const {asset,slot}=useChartHost();const [mounted,setMounted]=useState(false);const [visited,setVisited]=useState<Asset[]>([]);const [box,setBox]=useState<Box|null>(null);
+ const {asset,slot,expanded}=useChartHost();const [mounted,setMounted]=useState(false);const [visited,setVisited]=useState<Asset[]>([]);const [box,setBox]=useState<Box|null>(null);const exitRef=useRef<HTMLButtonElement>(null);
  useEffect(()=>setMounted(true),[]);
+ useEffect(()=>{
+  if(!expanded||!slot)return;
+  const body=document.body,root=document.documentElement;
+  const overflow=body.style.overflow,rootOverflow=root.style.overflow;
+  const padding=body.style.paddingRight;
+  const scrollX=window.scrollX,scrollY=window.scrollY;
+  const previous=document.activeElement;
+  const shell=document.querySelector<HTMLElement>('.app-shell');const wasInert=shell?.inert;
+  const gutter=window.innerWidth-root.clientWidth;
+  body.style.paddingRight=`${parseFloat(getComputedStyle(body).paddingRight)+gutter}px`;
+  body.style.overflow='hidden';root.style.overflow='hidden';if(shell)shell.inert=true;
+  exitRef.current?.focus();
+  const key=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();chartHost.set({expanded:false});}};
+  document.addEventListener('keydown',key);
+  return()=>{body.style.overflow=overflow;root.style.overflow=rootOverflow;body.style.paddingRight=padding;if(shell)shell.inert=wasInert??false;document.removeEventListener('keydown',key);window.scrollTo(scrollX,scrollY);if(previous instanceof HTMLElement&&previous.isConnected)previous.focus({preventScroll:true});};
+ },[expanded,slot]);
  useEffect(()=>{if(slot)setVisited(v=>v.includes(asset)?v:[...v,asset]);},[asset,slot]);
  useEffect(()=>{if(!slot){setBox(null);return;}let raf=0;let last='';const tick=()=>{const r=slot.getBoundingClientRect();const next={top:r.top+window.scrollY,left:r.left+window.scrollX,width:r.width,height:r.height};const key=`${next.top}|${next.left}|${next.width}|${next.height}`;if(key!==last){last=key;setBox(next);}raf=requestAnimationFrame(tick);};tick();return()=>cancelAnimationFrame(raf);},[slot]);
  if(!mounted||visited.length===0)return null;
  const width=box?.width||900,height=box?.height||600;
- return createPortal(<>{visited.map(a=>{const show=!!box&&a===asset;return <div key={a} className="persistent-chart" aria-hidden={!show} style={{position:'absolute',top:show?box.top:0,left:show?box.left:-20000,width,height,visibility:show?'visible':'hidden',zIndex:show?1:-1}}><TradingViewChart asset={a}/></div>;})}</>,document.body);
+ return createPortal(<>{visited.map(a=>{const show=!!box&&a===asset;const analysis=show&&expanded;return <div key={a} className={`persistent-chart${analysis?' chart-analysis-mode':''}`} role={analysis?'dialog':undefined} aria-modal={analysis?true:undefined} aria-label={analysis?`${a} chart analysis`:undefined} aria-hidden={!show} style={{position:analysis?'fixed':'absolute',top:analysis?0:show?box.top:0,left:analysis?0:show?box.left:-20000,width:analysis?'100%':width,height:analysis?'100dvh':height,visibility:show?'visible':'hidden',zIndex:analysis?60:show?1:-1}}>{analysis&&<div className="analysis-toolbar"><strong>{a}<span>Analysis Mode</span></strong><Button ref={exitRef} variant="outline" onClick={()=>chartHost.set({expanded:false})}><X size={16}/>Exit Chart</Button></div>}<TradingViewChart asset={a}/></div>;})}</>,document.body);
 }
