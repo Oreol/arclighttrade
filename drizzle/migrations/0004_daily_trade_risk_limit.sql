@@ -1,0 +1,1 @@
+ALTER TABLE public.desk_accounts ADD COLUMN max_trades_per_day integer NOT NULL DEFAULT 2 CHECK (max_trades_per_day IN (2,3,4));

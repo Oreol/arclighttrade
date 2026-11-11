@@ -26,3 +26,6 @@
 - Generate synthetic leaderboard peers in a dedicated deterministic catalog; fixed modeled personal placement is explicitly separate from real personal history metrics to avoid presenting a fabricated live competition.
 - Arclight Pro access is the server-granted subscriber role; checkout approval calls an authenticated server function that verifies the PayPal order when a server secret exists, and premium reads/AI analysis are enforced by role checks, not UI state.
 - Subscription self-reset derives the target only from authenticated server context and changes only active subscriptions and the subscriber role; refresh the shared access catalog afterward without reloading trading state.
+
+- Daily trade limits use a persisted account preference and count unique executed entries across positions/history by UTC day; shared execution guards include pending fills so closing trades or navigation cannot reset the cap.
+- Analysis mode resizes the existing body-portal chart layer in place and restores document scrolling on exit; never reparent or remount the widget for expansion.

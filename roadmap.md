@@ -1,4 +1,6 @@
 # Arclight Academy
+- [x] Add persisted daily limits (2/3/4, default 2), shared market/pending-fill enforcement and journal modal; signed-in settings reload, executions and lock verified.
+- [x] Add scroll-locked expanded analysis mode; same iframe and chart tools verified on desktop/mobile, original account restored; 100 tests passed.
 - [x] Reset the only current test account to Standard; authenticated Settings self-reset verified after sandbox activation, with Premium Signals and News checkout prompts restored. Trading state fingerprint unchanged; all 91 tests passed.
 - [x] Restore owner-scoped news analysis after navigation/reload; real subscriber interpretation restored on return and refresh, desktop/mobile chart switching verified, and all 86 tests passed without execution or checkout code changes.
 - [x] Isolate stable shared account context; all seven main pages load without the provider crash, live refresh retains context and navigation, and all 74 tests pass.

@@ -65,6 +65,7 @@ export type Database = {
           completed: string[]
           display_name: string
           history: Json
+          max_trades_per_day: number
           notifications: boolean
           pending_orders: Json
           positions: Json
@@ -76,6 +77,7 @@ export type Database = {
           completed?: string[]
           display_name?: string
           history?: Json
+          max_trades_per_day?: number
           notifications?: boolean
           pending_orders?: Json
           positions?: Json
@@ -87,6 +89,7 @@ export type Database = {
           completed?: string[]
           display_name?: string
           history?: Json
+          max_trades_per_day?: number
           notifications?: boolean
           pending_orders?: Json
           positions?: Json
