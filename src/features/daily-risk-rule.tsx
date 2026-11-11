@@ -7,7 +7,7 @@ import {useDesk} from './desk-context';
 import {DAILY_LIMITS,normalizeDailyLimit} from './discipline-data';
 export function DailyRiskRule(){
  const d=useDesk();
- return <div className="daily-risk-rule"><label><span>Risk Rule: Max Trades Per Day</span><Select value={String(d.maxTradesPerDay)} onValueChange={v=>d.setMaxTradesPerDay(normalizeDailyLimit(Number(v)))}><SelectTrigger aria-label="Risk Rule: Max Trades Per Day"><SelectValue/></SelectTrigger><SelectContent>{DAILY_LIMITS.map(n=><SelectItem key={n} value={String(n)}>{n} trades per day</SelectItem>)}</SelectContent></Select></label><span className={d.dailyLocked?'daily-count text-destructive':'daily-count text-ice'}>Trades today: {d.tradesToday} / {d.maxTradesPerDay}</span><small>Daily session resets at 00:00 UTC.</small></div>;
+ return <div className="daily-risk-rule"><label><span>Risk Rule: Max Trades Per Day</span><Select disabled={!d.accountReady} value={String(d.maxTradesPerDay)} onValueChange={v=>d.setMaxTradesPerDay(normalizeDailyLimit(Number(v)))}><SelectTrigger aria-label="Risk Rule: Max Trades Per Day"><SelectValue/></SelectTrigger><SelectContent>{DAILY_LIMITS.map(n=><SelectItem key={n} value={String(n)}>{n} trades per day</SelectItem>)}</SelectContent></Select></label><span className={d.dailyLocked?'daily-count text-destructive':'daily-count text-ice'}>Trades today: {d.tradesToday} / {d.maxTradesPerDay}</span><small>Daily session resets at 00:00 UTC.</small></div>;
 }
 export function DisciplineModal(){
  const d=useDesk();
